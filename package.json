@@ -1,0 +1,93 @@
+{
+    "name": "vscode-proximus",
+    "displayName": "Proximus (Quick Open File)",
+    "description": "Show the quick open dialog prefilled with the (optionally transformed) word under the cursor.",
+    "version": "1.0.0",
+    "license": "MIT",
+    "publisher": "mitchellnemitz",
+    "main": "./dist/extension.js",
+    "homepage": "https://github.com/mitchellnemitz/vscode-proximus",
+    "bugs": "https://github.com/mitchellnemitz/vscode-proximus/issues",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/mitchellnemitz/vscode-proximus.git"
+    },
+    "dependencies": {
+        "@types/change-case": "^2.3.1",
+        "change-case": "^3.1.0"
+    },
+    "devDependencies": {
+        "@types/node": "^12.12.11",
+        "typescript": "^3.7.0",
+        "vscode": "^1.1.36"
+    },
+    "scripts": {
+        "postinstall": "npx vscode-install",
+        "vscode:prepublish": "tsc -p ./",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "clean": "rm -rf dist/**/*"
+    },
+    "engines": {
+        "vscode": "^1.40.0"
+    },
+    "contributes": {
+        "commands": [
+            {
+                "command": "vscode-proximus.quickOpenFile",
+                "category": "File",
+                "title": "Quick Open File"
+            }
+        ],
+        "keybindings": [
+            {
+                "key": "cmd+alt+p",
+                "command": "vscode-proximus.quickOpenFile",
+                "when": "isMac && textInputFocus"
+            },
+            {
+                "key": "ctrl+win+p",
+                "command": "vscode-proximus.quickOpenFile",
+                "when": "isWindows && textInputFocus"
+            },
+            {
+                "key": "ctrl+meta+p",
+                "command": "vscode-proximus.quickOpenFile",
+                "when": "isLinux && textInputFocus"
+            }
+        ],
+        "menus": {
+            "commandPalette": [
+                {
+                    "command": "vscode-proximus.quickOpenFile",
+                    "when": "vscode-proximus:enabled"
+                }
+            ],
+            "editor/context": [
+                {
+                    "command": "vscode-proximus.quickOpenFile",
+                    "when": "editorTextFocus && !inOutput && vscode-proximus:enabled",
+                    "group": "file"
+                }
+            ]
+        },
+        "configuration": {
+            "title": "Proximus (Quick Open File)",
+            "properties": {
+                "vscode-proximus.regex": {
+                    "type": "string",
+                    "default": "[\\w\\-]+",
+                    "description": "A regular expression that defines valid text for an approximate file name"
+                },
+                "vscode-proximus.transform": {
+                    "type": "string",
+                    "default": "camelCase",
+                    "description": "The case that text should be transformed to before prefilling the quick open dialog"
+                }
+            }
+        }
+    },
+    "activationEvents": [
+        "*"
+    ]
+}
