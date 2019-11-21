@@ -1,4 +1,4 @@
-.git
+.git/
 .gitignore
-.vscode
-./src/**
+.vscode/
+node_modules/

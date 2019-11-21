@@ -10,41 +10,63 @@ enum Case {
 
 const configuration = new class {
 	public regex = new RegExp("[\\w\\-]+");
-	public transform = "camelCase";
+    public excludePrefix: string[] = [];
+    public excludeSuffix: string[] = [];
+    public transform = "none";
+    public prefix = "";
+    public suffix = "";
+}
+
+/**
+ * Configuration change handler
+ */
+function configure() {
+    let newConfiguration = vscode.workspace.getConfiguration("proximus");
+
+    if (!newConfiguration) {
+        return;
+    }
+
+    if (newConfiguration.has("regex")) {
+        configuration.regex = new RegExp(newConfiguration.get("regex") as string);
+    }
+
+    if (newConfiguration.has("excludePrefix")) {
+        configuration.excludePrefix = newConfiguration.get("excludePrefix") as string[];
+    }
+
+    if (newConfiguration.has("excludeSuffix")) {
+        configuration.excludeSuffix = newConfiguration.get("excludeSuffix") as string[];
+    }
+
+    if (newConfiguration.has("transform")) {
+        configuration.transform = newConfiguration.get("transform") as string;
+    }
+
+    if (newConfiguration.has("prefix")) {
+        configuration.prefix = newConfiguration.get("prefix") as string;
+    }
+
+    if (newConfiguration.has("suffix")) {
+        configuration.suffix = newConfiguration.get("suffix") as string;
+    }
 }
 
 /**
  * On extension activation
  */
 export function activate(context: vscode.ExtensionContext) {
-    vscode.commands.executeCommand("setContext", "vscode-proximus:enabled", true);
+    vscode.commands.executeCommand("setContext", "proximus:enabled", true);
 
-    /**
-     * Configuration change handler
-     */
-    vscode.workspace.onDidChangeConfiguration(() => {
-        let newConfiguration = vscode.workspace.getConfiguration("vscode-proximus");
+    configure();
 
-        if (!newConfiguration) {
-            return;
-        }
-
-        if (newConfiguration.has("regex")) {
-            configuration.regex = new RegExp(newConfiguration.get("regex") as string);
-        }
-
-        if (newConfiguration.has("transform")) {
-            configuration.transform = newConfiguration.get("transform") as string;
-        }
-    });
-
-    vscode
+    vscode.workspace.onDidChangeConfiguration(configure);
 
     /**
      * Register command
      */
     context.subscriptions.push(
-        vscode.commands.registerCommand("vscode-proximus.quickOpenFile", () => {
+        vscode.commands.registerCommand("proximus.quickOpenFile", () => {
             const editor = vscode.window.activeTextEditor;
 
             if (!editor) {
@@ -57,8 +79,26 @@ export function activate(context: vscode.ExtensionContext) {
                 editor.document.getWordRangeAtPosition(selection.start, configuration.regex) :
                 new vscode.Range(selection.start, selection.end);
 
+            // Extract the text
             let text = editor.document.getText(range);
 
+            // Remove the first matching prefix
+            for (const prefix of configuration.excludePrefix) {
+                if (text.startsWith(prefix)) {
+                    text = text.slice(prefix.length);
+                    break;
+                }
+            }
+
+            // Remove the first matching suffix
+            for (const suffix of configuration.excludeSuffix) {
+                if (text.endsWith(suffix)) {
+                    text = text.slice(0, -suffix.length);
+                    break;
+                }
+            }
+
+            // Change the case
             switch (configuration.transform) {
                 case Case.Camel:
                     text = camelCase(text);
@@ -77,6 +117,10 @@ export function activate(context: vscode.ExtensionContext) {
                     break;
             }
 
+            // Add the prefix and suffix
+            text = configuration.prefix + text + configuration.suffix;
+
+            // Show the quick open dialog
             vscode.commands.executeCommand("workbench.action.quickOpen", text);
         }),
     );

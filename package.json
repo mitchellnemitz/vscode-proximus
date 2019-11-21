@@ -12,29 +12,33 @@
         "type": "git",
         "url": "https://github.com/mitchellnemitz/vscode-proximus.git"
     },
-    "dependencies": {
-        "@types/change-case": "^2.3.1",
-        "change-case": "^3.1.0"
-    },
     "devDependencies": {
+        "@types/change-case": "^2.3.1",
         "@types/node": "^12.12.11",
+        "change-case": "^3.1.0",
+        "ts-loader": "^6.2.1",
         "typescript": "^3.7.0",
-        "vscode": "^1.1.36"
+        "vscode": "^1.1.36",
+        "webpack": "^4.41.2",
+        "webpack-cli": "^3.3.10"
     },
     "scripts": {
-        "postinstall": "npx vscode-install",
-        "vscode:prepublish": "tsc -p ./",
-        "compile": "tsc -p ./",
-        "watch": "tsc -watch -p ./",
-        "clean": "rm -rf dist/**/*"
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "vscode:prepublish": "webpack --mode production",
+        "build": "webpack --mode development",
+        "watch": "webpack --mode development --watch",
+        "clean": "rm -rf dist/*"
     },
     "engines": {
         "vscode": "^1.40.0"
     },
+    "activationEvents": [
+        "*"
+    ],
     "contributes": {
         "commands": [
             {
-                "command": "vscode-proximus.quickOpenFile",
+                "command": "proximus.quickOpenFile",
                 "category": "File",
                 "title": "Quick Open File"
             }
@@ -42,31 +46,31 @@
         "keybindings": [
             {
                 "key": "cmd+alt+p",
-                "command": "vscode-proximus.quickOpenFile",
+                "command": "proximus.quickOpenFile",
                 "when": "isMac && textInputFocus"
             },
             {
                 "key": "ctrl+win+p",
-                "command": "vscode-proximus.quickOpenFile",
+                "command": "proximus.quickOpenFile",
                 "when": "isWindows && textInputFocus"
             },
             {
                 "key": "ctrl+meta+p",
-                "command": "vscode-proximus.quickOpenFile",
+                "command": "proximus.quickOpenFile",
                 "when": "isLinux && textInputFocus"
             }
         ],
         "menus": {
             "commandPalette": [
                 {
-                    "command": "vscode-proximus.quickOpenFile",
-                    "when": "vscode-proximus:enabled"
+                    "command": "proximus.quickOpenFile",
+                    "when": "proximus:enabled"
                 }
             ],
             "editor/context": [
                 {
-                    "command": "vscode-proximus.quickOpenFile",
-                    "when": "editorTextFocus && !inOutput && vscode-proximus:enabled",
+                    "command": "proximus.quickOpenFile",
+                    "when": "editorTextFocus && !inOutput && proximus:enabled",
                     "group": "file"
                 }
             ]
@@ -74,20 +78,37 @@
         "configuration": {
             "title": "Proximus (Quick Open File)",
             "properties": {
-                "vscode-proximus.regex": {
+                "proximus.regex": {
                     "type": "string",
                     "default": "[\\w\\-]+",
                     "description": "A regular expression that defines valid text for an approximate file name"
                 },
-                "vscode-proximus.transform": {
+                "proximus.excludePrefix": {
+                    "type": "array",
+                    "default": [],
+                    "description": "List of strings to remove from the beginning of the matched text before transformation"
+                },
+                "proximus.excludeSuffix": {
+                    "type": "array",
+                    "default": [],
+                    "description": "List of strings to remove from the end of the matched text before tranformation"
+                },
+                "proximus.transform": {
                     "type": "string",
-                    "default": "camelCase",
-                    "description": "The case that text should be transformed to before prefilling the quick open dialog"
+                    "default": "none",
+                    "description": "The case that text should be transformed to (none, PascalCase, camelCase, snake_case, kebab-case)"
+                },
+                "proximus.prefix": {
+                    "type": "string",
+                    "default": "",
+                    "description": "String that text should be prefixed with after transformation"
+                },
+                "proximus.suffix": {
+                    "type": "string",
+                    "default": "",
+                    "description": "String that text should be suffixed with after transformation"
                 }
             }
         }
-    },
-    "activationEvents": [
-        "*"
-    ]
+    }
 }
