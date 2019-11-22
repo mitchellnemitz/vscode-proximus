@@ -2,32 +2,30 @@
     "name": "vscode-proximus",
     "displayName": "Proximus (Quick Open File)",
     "description": "Show the quick open dialog prefilled with the (optionally transformed) word under the cursor.",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "license": "MIT",
+    "main": "dist/extension.js",
     "publisher": "mitchellnemitz",
-    "main": "./dist/extension.js",
+    "icon": "proximus.png",
+    "repository": "github:mitchellnemitz/vscode-proximus",
     "homepage": "https://github.com/mitchellnemitz/vscode-proximus",
     "bugs": "https://github.com/mitchellnemitz/vscode-proximus/issues",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/mitchellnemitz/vscode-proximus.git"
-    },
     "devDependencies": {
         "@types/change-case": "^2.3.1",
         "@types/node": "^12.12.11",
+        "@types/vscode": "^1.40.0",
         "change-case": "^3.1.0",
         "ts-loader": "^6.2.1",
         "typescript": "^3.7.0",
-        "vscode": "^1.1.36",
         "webpack": "^4.41.2",
         "webpack-cli": "^3.3.10"
     },
     "scripts": {
-        "postinstall": "node ./node_modules/vscode/bin/install",
-        "vscode:prepublish": "webpack --mode production",
+        "clean": "rm -rf dist/*",
         "build": "webpack --mode development",
         "watch": "webpack --mode development --watch",
-        "clean": "rm -rf dist/*"
+        "package": "vsce package -o dist/proximus.vsix",
+        "vscode:prepublish": "webpack --mode production"
     },
     "engines": {
         "vscode": "^1.40.0"

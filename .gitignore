@@ -1,4 +1,5 @@
-node_modules
-dist/**
-!dist/.gitkeep
-npm-debug.log*
+/node_modules/
+/dist/**
+!/dist/.gitkeep
+/npm-debug.log*
+*.vsix

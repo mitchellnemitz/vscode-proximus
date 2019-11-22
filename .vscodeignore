@@ -1,4 +1,8 @@
-.git/
-.gitignore
-.vscode/
-node_modules/
+*
+*/**
+**/.DS_Store
+!dist/*.js
+!proximus.png
+!package.json
+!LICENSE
+!README.md
