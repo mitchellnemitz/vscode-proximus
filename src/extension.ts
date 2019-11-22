@@ -9,7 +9,7 @@ enum Case {
 }
 
 const configuration = new class {
-	public regex = new RegExp("[\\w\\-]+");
+    public regex = new RegExp("[\\w\\-]+");
     public excludePrefix: string[] = [];
     public excludeSuffix: string[] = [];
     public transform = "none";
