@@ -1,8 +1,8 @@
 {
     "name": "vscode-proximus",
-    "displayName": "Proximus (Quick Open File)",
+    "displayName": "Proximus (Quick Open from Text)",
     "description": "Show the quick open dialog prefilled with the (optionally transformed) word under the cursor.",
-    "version": "1.0.1",
+    "version": "1.1.0",
     "license": "MIT",
     "main": "dist/extension.js",
     "publisher": "mitchellnemitz",
@@ -38,7 +38,7 @@
             {
                 "command": "proximus.quickOpenFile",
                 "category": "File",
-                "title": "Quick Open File"
+                "title": "Quick Open from Text"
             }
         ],
         "keybindings": [
@@ -74,19 +74,19 @@
             ]
         },
         "configuration": {
-            "title": "Proximus (Quick Open File)",
+            "title": "Proximus (Quick Open from Text)",
             "properties": {
                 "proximus.regex": {
                     "type": "string",
                     "default": "[\\w\\-]+",
-                    "description": "A regular expression that defines valid text for an approximate file name"
+                    "description": "Regular expression used to extract text around the cursor for the quick open dialog"
                 },
-                "proximus.excludePrefix": {
+                "proximus.trimLeft": {
                     "type": "array",
                     "default": [],
                     "description": "List of strings to remove from the beginning of the matched text before transformation"
                 },
-                "proximus.excludeSuffix": {
+                "proximus.trimRight": {
                     "type": "array",
                     "default": [],
                     "description": "List of strings to remove from the end of the matched text before tranformation"
@@ -94,17 +94,17 @@
                 "proximus.transform": {
                     "type": "string",
                     "default": "none",
-                    "description": "The case that text should be transformed to (none, PascalCase, camelCase, snake_case, kebab-case)"
+                    "description": "Case that the extracted text should be transformed to (none, camelCase, PascalCase, snake_case, kebab-case, path/case, dot.case, no case)"
                 },
                 "proximus.prefix": {
                     "type": "string",
                     "default": "",
-                    "description": "String that text should be prefixed with after transformation"
+                    "description": "String that the extracted text should be prefixed with after transformation"
                 },
                 "proximus.suffix": {
                     "type": "string",
                     "default": "",
-                    "description": "String that text should be suffixed with after transformation"
+                    "description": "String that extracted text should be suffixed with after transformation"
                 }
             }
         }

@@ -1,17 +1,20 @@
 import * as vscode from "vscode";
-import { camelCase, pascalCase, snakeCase, headerCase } from "change-case";
+import { camelCase, pascalCase, snakeCase, paramCase, pathCase, dotCase, noCase } from "change-case";
 
 enum Case {
-    Pascal = 'PascalCase',
-    Camel = 'camelCase',
-    Snake = 'snake_case',
-    Kebab = 'kebab-case',
+    Camel = "camelCase",
+    Pascal = "PascalCase",
+    Snake = "snake_case",
+    Kebab = "kebab-case",
+    Path = "path/case",
+    Dot = "dot.case",
+    No = "no case",
 }
 
 const configuration = new class {
-    public regex = new RegExp("[\\w\\-]+");
-    public excludePrefix: string[] = [];
-    public excludeSuffix: string[] = [];
+    public regex = "[\\w\\-]+";
+    public trimLeft: string[] = [];
+    public trimRight: string[] = [];
     public transform = "none";
     public prefix = "";
     public suffix = "";
@@ -28,15 +31,15 @@ function configure() {
     }
 
     if (newConfiguration.has("regex")) {
-        configuration.regex = new RegExp(newConfiguration.get("regex") as string);
+        configuration.regex = newConfiguration.get("regex") as string;
     }
 
-    if (newConfiguration.has("excludePrefix")) {
-        configuration.excludePrefix = newConfiguration.get("excludePrefix") as string[];
+    if (newConfiguration.has("trimLeft")) {
+        configuration.trimLeft = (newConfiguration.get("trimLeft") as string[]).sort((a, b) => b.length - a.length);
     }
 
-    if (newConfiguration.has("excludeSuffix")) {
-        configuration.excludeSuffix = newConfiguration.get("excludeSuffix") as string[];
+    if (newConfiguration.has("trimRight")) {
+        configuration.trimRight = (newConfiguration.get("trimRight") as string[]).sort((a, b) => b.length - a.length);
     }
 
     if (newConfiguration.has("transform")) {
@@ -70,35 +73,38 @@ export function activate(context: vscode.ExtensionContext) {
             const editor = vscode.window.activeTextEditor;
 
             if (!editor) {
-                return;
+                return vscode.commands.executeCommand("workbench.action.quickOpen");
             }
 
             const selection = editor.selection;
-
             const range = selection.isEmpty ?
-                editor.document.getWordRangeAtPosition(selection.start, configuration.regex) :
+                editor.document.getWordRangeAtPosition(selection.start, new RegExp(configuration.regex)) :
                 new vscode.Range(selection.start, selection.end);
 
-            // Extract the text
+            if (!range) {
+                return vscode.commands.executeCommand("workbench.action.quickOpen");
+            }
+
             let text = editor.document.getText(range);
 
-            // Remove the first matching prefix
-            for (const prefix of configuration.excludePrefix) {
+            for (const prefix of configuration.trimLeft) {
                 if (text.startsWith(prefix)) {
                     text = text.slice(prefix.length);
                     break;
                 }
             }
 
-            // Remove the first matching suffix
-            for (const suffix of configuration.excludeSuffix) {
+            for (const suffix of configuration.trimRight) {
                 if (text.endsWith(suffix)) {
                     text = text.slice(0, -suffix.length);
                     break;
                 }
             }
 
-            // Change the case
+            if (!text.length) {
+                return vscode.commands.executeCommand("workbench.action.quickOpen");
+            }
+
             switch (configuration.transform) {
                 case Case.Camel:
                     text = camelCase(text);
@@ -113,14 +119,24 @@ export function activate(context: vscode.ExtensionContext) {
                     break;
 
                 case Case.Kebab:
-                    text = headerCase(text);
+                    text = paramCase(text);
+                    break;
+
+                case Case.Path:
+                    text = pathCase(text);
+                    break;
+
+                case Case.Dot:
+                    text = dotCase(text);
+                    break;
+
+                case Case.No:
+                    text = noCase(text);
                     break;
             }
 
-            // Add the prefix and suffix
             text = configuration.prefix + text + configuration.suffix;
 
-            // Show the quick open dialog
             vscode.commands.executeCommand("workbench.action.quickOpen", text);
         }),
     );
