@@ -11,14 +11,14 @@
     "homepage": "https://github.com/mitchellnemitz/vscode-proximus",
     "bugs": "https://github.com/mitchellnemitz/vscode-proximus/issues",
     "devDependencies": {
-        "@types/change-case": "^2.3.1",
-        "@types/node": "^12.12.11",
-        "@types/vscode": "^1.40.0",
-        "change-case": "^3.1.0",
-        "ts-loader": "^6.2.1",
-        "typescript": "^3.7.0",
-        "webpack": "^4.41.2",
-        "webpack-cli": "^3.3.10"
+        "@types/node": "^12.12.50",
+        "@types/vscode": "^1.47.0",
+        "change-case": "^4.0.0",
+        "ts-loader": "^8.0.0",
+        "typescript": "^3.9.6",
+        "vsce": "^1.77.0",
+        "webpack": "^4.43.0",
+        "webpack-cli": "^3.3.12"
     },
     "scripts": {
         "clean": "rm -rf dist/*",
@@ -53,7 +53,7 @@
                 "when": "isWindows && textInputFocus"
             },
             {
-                "key": "ctrl+meta+p",
+                "key": "ctrl+super+p",
                 "command": "proximus.quickOpenFile",
                 "when": "isLinux && textInputFocus"
             }
