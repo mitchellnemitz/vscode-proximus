@@ -2,7 +2,7 @@
     "name": "vscode-proximus",
     "displayName": "Proximus (Quick Open from Text)",
     "description": "Show the quick open dialog prefilled with the (optionally transformed) word under the cursor.",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "license": "MIT",
     "main": "dist/extension.js",
     "publisher": "mitchellnemitz",
@@ -28,7 +28,7 @@
         "vscode:prepublish": "webpack --mode production"
     },
     "engines": {
-        "vscode": "^1.40.0"
+        "vscode": "^1.47.0"
     },
     "activationEvents": [
         "*"
